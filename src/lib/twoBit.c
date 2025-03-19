@@ -11,8 +11,8 @@
 #include "obscure.h"
 #include "bPlusTree.h"
 #include "twoBit.h"
-#include "udc.h"
-#include "net.h"
+//#include "udc.h"
+//#include "net.h"
 #include "portable.h"
 #include <limits.h>
 
@@ -22,45 +22,45 @@
  * struct udcFile *.
  */
 /* first the UDC wrappers */
-static void udcSeekCurWrap(void *file, bits64 offset)
-{
-udcSeekCur((struct udcFile *)file, offset);
-}
-
-static void udcSeekWrap(void *file, bits64 offset)
-{
-udcSeek((struct udcFile *)file, offset);
-}
-
-static bits64 udcTellWrap(void *file)
-{
-return udcTell((struct udcFile *)file);
-}
-
-static void udcMustReadWrap(void *file, void *buf, size_t size)
-{
-udcMustRead((struct udcFile *)file, buf, size);
-}
-
-static void udcFileCloseWrap(void *pFile)
-{
-udcFileClose((struct udcFile **)pFile);
-}
-
-static bits32 udcReadBits32Wrap(void *f, boolean isSwapped)
-{
-return udcReadBits32((struct udcFile *)f, isSwapped);
-}
-
-static bits64 udcReadBits64Wrap(void *f, boolean isSwapped)
-{
-return udcReadBits64((struct udcFile *)f, isSwapped);
-}
-
-static boolean udcFastReadStringWrap(void *f, char buf[256])
-{
-return udcFastReadString((struct udcFile *)f, buf);
-}
+//static void udcSeekCurWrap(void *file, bits64 offset)
+//{
+//udcSeekCur((struct udcFile *)file, offset);
+//}
+//
+//static void udcSeekWrap(void *file, bits64 offset)
+//{
+//udcSeek((struct udcFile *)file, offset);
+//}
+//
+//static bits64 udcTellWrap(void *file)
+//{
+//return udcTell((struct udcFile *)file);
+//}
+//
+//static void udcMustReadWrap(void *file, void *buf, size_t size)
+//{
+//udcMustRead((struct udcFile *)file, buf, size);
+//}
+//
+//static void udcFileCloseWrap(void *pFile)
+//{
+//udcFileClose((struct udcFile **)pFile);
+//}
+//
+//static bits32 udcReadBits32Wrap(void *f, boolean isSwapped)
+//{
+//return udcReadBits32((struct udcFile *)f, isSwapped);
+//}
+//
+//static bits64 udcReadBits64Wrap(void *f, boolean isSwapped)
+//{
+//return udcReadBits64((struct udcFile *)f, isSwapped);
+//}
+//
+//static boolean udcFastReadStringWrap(void *f, char buf[256])
+//{
+//return udcFastReadString((struct udcFile *)f, buf);
+//}
 
 /* now the stdio wrappers */
 static void seekCurWrap(void *file, bits64 offset)
@@ -110,14 +110,14 @@ static void setFileFuncs( struct twoBitFile *tbf, boolean useUdc)
 {
 if (useUdc)
     {
-    tbf->ourSeekCur = udcSeekCurWrap;
-    tbf->ourSeek = udcSeekWrap;
-    tbf->ourTell = udcTellWrap;
-    tbf->ourReadBits32 = udcReadBits32Wrap;
-    tbf->ourReadBits64 = udcReadBits64Wrap;
-    tbf->ourFastReadString = udcFastReadStringWrap;
-    tbf->ourClose = udcFileCloseWrap;
-    tbf->ourMustRead = udcMustReadWrap;
+//    tbf->ourSeekCur = udcSeekCurWrap;
+//    tbf->ourSeek = udcSeekWrap;
+//    tbf->ourTell = udcTellWrap;
+//    tbf->ourReadBits32 = udcReadBits32Wrap;
+//    tbf->ourReadBits64 = udcReadBits64Wrap;
+//    tbf->ourFastReadString = udcFastReadStringWrap;
+//    tbf->ourClose = udcFileCloseWrap;
+//    tbf->ourMustRead = udcMustReadWrap;
     }
 else
     {
@@ -442,9 +442,9 @@ struct twoBitFile *tbf;
 AllocVar(tbf);
 setFileFuncs(tbf, useUdc);
 
-if (useUdc)
-    tbf->f = udcFileOpen(fileName, NULL);
-else
+//if (useUdc)
+//    tbf->f = udcFileOpen(fileName, NULL);
+//else
     tbf->f = mustOpen(fileName, "rb");
 
 return tbf;
@@ -484,8 +484,8 @@ struct twoBitFile *twoBitOpen(char *fileName)
  * Squawk and die if there is a problem. */
 {
 boolean useUdc = FALSE;
-if (hasProtocol(fileName))
-    useUdc = TRUE;
+//if (hasProtocol(fileName))
+//    useUdc = TRUE;
 struct twoBitFile *tbf = twoBitOpenReadHeader(fileName, useUdc);
 struct twoBitIndex *index;
 boolean isSwapped = tbf->isSwapped;
@@ -518,8 +518,8 @@ struct twoBitFile *twoBitOpenExternalBptIndex(char *twoBitName, char *bptName)
  * as will the hash. */
 {
 boolean useUdc = FALSE;
-if (hasProtocol(twoBitName))
-    useUdc = TRUE;
+//if (hasProtocol(twoBitName))
+//    useUdc = TRUE;
 struct twoBitFile *tbf = twoBitOpenReadHeader(twoBitName, useUdc);
 tbf->bpt = bptFileOpen(bptName);
 if (tbf->seqCount != tbf->bpt->itemCount)
@@ -985,10 +985,10 @@ boolean twoBitIsFile(char *fileName)
 /* Return TRUE if file is in .2bit format. */
 {
 boolean useUdc = FALSE;
-if (hasProtocol(fileName))
-    useUdc = TRUE;
-else if (!isRegularFile(fileName))
-    return FALSE;
+//if (hasProtocol(fileName))
+//    useUdc = TRUE;
+//else if (!isRegularFile(fileName))
+//    return FALSE;
 
 struct twoBitFile *tbf = getTbfAndOpen(fileName, useUdc);
 boolean isSwapped;

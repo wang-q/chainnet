@@ -1,6 +1,8 @@
 # Create chainnet library
 add_library(chainnetlib STATIC
+    aliType.c
     axt.c
+    binRange.c
     bits.c
     bPlusTree.c
     boxClump.c
@@ -18,15 +20,17 @@ add_library(chainnetlib STATIC
     hash.c
     linefile.c
     localmem.c
-    net.c
     nib.c
     obscure.c
     options.c
     pipeline.c
     psl.c
+    rangeTree.c
+    rbTree.c
+    sqlList.c
     sqlNum.c
     twoBit.c
-    udc.c
+    verbose.c
 )
 
 # Set include directories for the library

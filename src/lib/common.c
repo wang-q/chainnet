@@ -68,7 +68,7 @@ char *catThreeStrings(char *a, char *b, char *c)
 /* Allocate new string that is a concatenation of three strings. */
 {
 int aLen = strlen(a), bLen = strlen(b), cLen = strlen(c);
-int len = aLen + bLen + cLen; 
+int len = aLen + bLen + cLen;
 char *newBuf = needLargeMem(len+1);
 memcpy(newBuf, a, aLen);
 memcpy(newBuf+aLen, b, bLen);
@@ -159,7 +159,7 @@ void sortStrings(char **array, int count)
 /* Sort array using strcmp */
 {
 if (count > 1)
-    qsort(array, count, sizeof(array[0]), stringCmp); 
+    qsort(array, count, sizeof(array[0]), stringCmp);
 }
 
 /* Swap buffers a and b. */
@@ -726,7 +726,7 @@ return cmpStringsWithEmbeddedNumbers(a->name, b->name);
 
 int slNameCmpWordsWithEmbeddedNumbers(const void *va, const void *vb)
 /* Compare strings such as gene names that may have embedded numbers,
- * in a string sensitive way so that bmp4a comes before bmp14a 
+ * in a string sensitive way so that bmp4a comes before bmp14a
  * and ABc and abC are treated as the same.  A little slow. */
 {
 const struct slName *a = *((struct slName **)va);
@@ -858,8 +858,8 @@ return list;
 struct slName *slNameListFromCommaEscaped(char *s)
 /* Return list of slNames gotten from parsing comma delimited string.
  * The final comma is optional. a,b,c  and a,b,c, are equivalent
- * for comma-delimited lists. To escape commas, put two in a row, 
- * which eliminates the possibility for null names 
+ * for comma-delimited lists. To escape commas, put two in a row,
+ * which eliminates the possibility for null names
  * (eg.  a,,b,c will parse to two elements a,b and c). */
 {
 if (s == NULL)
@@ -1594,7 +1594,7 @@ return NULL;
 
 char *nextStringBetween(char *start, char *end, char **pHaystack)
 /* Return next string that occurs between start and end strings
- * starting seach at *pHaystack.  This will update *pHaystack to after 
+ * starting seach at *pHaystack.  This will update *pHaystack to after
  * end, so it can be called repeatedly. Returns NULL when
  * no more to be found*/
 {
@@ -1754,7 +1754,7 @@ char c;
 while((c=*s))
     {
     if (c == oldc)
-       *s = newc;	
+       *s = newc;
     ++s;
     }
 }
@@ -3803,40 +3803,40 @@ return TRUE;
 }
 
 
-time_t mktimeFromUtc(struct tm *tm)
-// convert UTC time to UTC time_t 
-// The timegm function is available on Linux and BSD and MacOS/Darwin
-// This is thread-safe and avoids setenv
-{
-return timegm(tm);
-}
+//time_t mktimeFromUtc(struct tm *tm)
+//// convert UTC time to UTC time_t
+//// The timegm function is available on Linux and BSD and MacOS/Darwin
+//// This is thread-safe and avoids setenv
+//{
+//return timegm(tm);
+//}
 
 
-time_t dateToSeconds(const char *date,const char*format)
-// Convert a string date to time_t
-{
-struct tm storage={0,0,0,0,0,0,0,0,0};
-if (strptime(date,format,&storage)==NULL)
-    return 0;
-else
-    return mktime(&storage);
-}
+//time_t dateToSeconds(const char *date,const char*format)
+//// Convert a string date to time_t
+//{
+//struct tm storage={0,0,0,0,0,0,0,0,0};
+//if (strptime(date,format,&storage)==NULL)
+//    return 0;
+//else
+//    return mktime(&storage);
+//}
 
-boolean dateIsOld(const char *date,const char*format)
-// Is this string date older than now?
-{
-time_t test = dateToSeconds(date,format);
-time_t now = clock1();
-return (test < now);
-}
+//boolean dateIsOld(const char *date,const char*format)
+//// Is this string date older than now?
+//{
+//time_t test = dateToSeconds(date,format);
+//time_t now = clock1();
+//return (test < now);
+//}
 
-boolean dateIsOlderBy(const char *date,const char*format, time_t seconds)
-// Is this string date older than now by this many seconds?
-{
-time_t test = dateToSeconds(date,format);
-time_t now = clock1();
-return (test + seconds < now);
-}
+//boolean dateIsOlderBy(const char *date,const char*format, time_t seconds)
+//// Is this string date older than now by this many seconds?
+//{
+//time_t test = dateToSeconds(date,format);
+//time_t now = clock1();
+//return (test + seconds < now);
+//}
 
 static int daysOfMonth(struct tm *tp)
 /* Returns the days of the month given the year */
@@ -3908,19 +3908,19 @@ while ( (tp->tm_mon >11  || tp->tm_mon <0)
     }
 }
 
-char *dateAddTo(char *date,char *format,int addYears,int addMonths,int addDays)
-/* Add years,months,days to a formatted date and returns the new date as a cloned string
-*  format is a strptime/strftime format: %F = yyyy-mm-dd */
-{
-char *newDate = needMem(12);
-struct tm tp;
-if (strptime(date,format, &tp))
-    {
-    dateAdd(&tp,addYears,addMonths,addDays); // tp.tm_year only contains years since 1900
-    strftime(newDate,12,format,&tp);
-    }
-return cloneString(newDate);  // newDate is never freed!
-}
+//char *dateAddTo(char *date,char *format,int addYears,int addMonths,int addDays)
+///* Add years,months,days to a formatted date and returns the new date as a cloned string
+//*  format is a strptime/strftime format: %F = yyyy-mm-dd */
+//{
+//char *newDate = needMem(12);
+//struct tm tp;
+//if (strptime(date,format, &tp))
+//    {
+//    dateAdd(&tp,addYears,addMonths,addDays); // tp.tm_year only contains years since 1900
+//    strftime(newDate,12,format,&tp);
+//    }
+//return cloneString(newDate);  // newDate is never freed!
+//}
 
 boolean haplotype(const char *name)
 /* Is this name a haplotype name ?  _hap or _alt in the name */

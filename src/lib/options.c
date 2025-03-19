@@ -2,7 +2,7 @@
  * This is smaller and more flexible than the cgiSpoof
  * routines we used to use - though cgiSpoof is still the
  * method of choice for actual CGI routines that want to
- * be tested from the command line. 
+ * be tested from the command line.
  *
  * This file is copyright 2002 Jim Kent, but license is hereby
  * granted for all use - public, private or commercial. */
@@ -12,9 +12,9 @@
 #include "verbose.h"
 #include "options.h"
 #include <limits.h>
-#include "srcVersion.h"
+//#include "srcVersion.h"
 
-static char *srcVersion = "kent source version " SRC_VERSION;
+static char *srcVersion = "kent source version "; // SRC_VERSION;
 
 #ifdef MACHTYPE_alpha
     #define strtoll strtol
@@ -121,7 +121,7 @@ switch (spec->flags & OPTION_TYPE_MASK)
 static boolean parseAnOption(struct hash *hash, char *arg, struct optionSpec *optionSpecs, boolean keepNumbers)
 /* Parse a single option argument and add to the hash, validating if
  * optionSpecs is not NULL.  Return TRUE if it's arg is an option argument
- * FALSE if it's not.  If boolean keepNumbers is set, then return FALSE 
+ * FALSE if it's not.  If boolean keepNumbers is set, then return FALSE
  * when encountering negative ints or floats.
  */
 {
@@ -240,7 +240,7 @@ for (; i<origArgc; ++i)
     }
 
 *pArgc = newArgc;
-*wrPt = NULL; 
+*wrPt = NULL;
 return hash;
 }
 
@@ -286,7 +286,7 @@ if (options == NULL)
 }
 
 void optionHash(int *pArgc, char *argv[])
-/* Read options in command line into options hash.   
+/* Read options in command line into options hash.
  * Options come in three forms:
  *      -option         words starting with dash
  *      option=val      words with = in the middle
@@ -337,16 +337,16 @@ if (options == NULL)
     errAbort("optGet called before optionHash");
 return hashFindVal(options, name);
 }
- 
+
 char *optionVal(char *name, char *defaultVal)
 /* Return named option if in options hash, otherwise default. */
 {
 char *ret;
 /* if a optionSpec was used, make sure this option is not a multi option */
-if(optionSpecification != NULL) 
+if(optionSpecification != NULL)
     {
     struct optionSpec *spec = matchingOption(name, optionSpecification);
-    if(spec != NULL && (spec->flags & OPTION_MULTI))    
+    if(spec != NULL && (spec->flags & OPTION_MULTI))
         errAbort("ERROR: optionVal cannot be used to get the value of an OPTION_MULTI");
     }
 

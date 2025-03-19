@@ -1,11 +1,11 @@
-/* Obscure stuff that is handy every now and again. 
+/* Obscure stuff that is handy every now and again.
  *
  * This file is copyright 2002 Jim Kent, but license is hereby
  * granted for all use - public, private or commercial. */
 
 #include "common.h"
 #include <unistd.h>
-#include <sys/syscall.h>
+//#include <sys/syscall.h>
 #include "portable.h"
 #include "localmem.h"
 #include "hash.h"
@@ -190,13 +190,13 @@ while (lineFileNextReal(lf, &line))
         {
 	*retColCount = colCount = chopByChar(line, '\t', NULL, 0);
 	verbose(2, "Got %d columns in first real line\n", colCount);
-	colAlloc = colCount + 1;  // +1 so we can detect unexpected input and complain 
+	colAlloc = colCount + 1;  // +1 so we can detect unexpected input and complain
 	lmAllocArray(hash->lm, row, colAlloc);
 	}
     int count = chopByChar(line, '\t', row, colAlloc);
     if (count != colCount)
         {
-	errAbort("Expecting %d words, got more than that line %d of %s", 
+	errAbort("Expecting %d words, got more than that line %d of %s",
 	    colCount, lf->lineIx, lf->fileName);
 	}
     hashAdd(hash, row[keyColIx], lmCloneRow(hash->lm, row, colCount) );
@@ -357,7 +357,7 @@ return b - a;
 boolean parseQuotedStringNoEscapes( char *in, char *out, char **retNext)
 /* Read quoted string from in (which should begin with first quote).
  * Write unquoted string to out, which may be the same as in.
- * Return pointer to character past end of string in *retNext. 
+ * Return pointer to character past end of string in *retNext.
  * Return FALSE if can't find end.
  * Unlike parseQuotedString() do not treat backslash as an escape
  *	character, merely pass it on through.
@@ -388,7 +388,7 @@ return TRUE;
 boolean parseQuotedString( char *in, char *out, char **retNext)
 /* Read quoted string from in (which should begin with first quote).
  * Write unquoted string to out, which may be the same as in.
- * Return pointer to character past end of string in *retNext. 
+ * Return pointer to character past end of string in *retNext.
  * Return FALSE if can't find end. */
 {
 char c, *s = in;
@@ -475,7 +475,7 @@ return list;
 }
 
 void escCopy(char *in, char *out, char toEscape, char escape)
-/* Copy in to out, escaping as needed.  Out better be big enough. 
+/* Copy in to out, escaping as needed.  Out better be big enough.
  * (Worst case is strlen(in)*2 + 1.) */
 {
 char c;
@@ -492,7 +492,7 @@ for (;;)
 
 char *makeEscapedString(char *in, char toEscape)
 /* Return string that is a copy of in, but with all
- * toEscape characters preceded by '\' 
+ * toEscape characters preceded by '\'
  * When done freeMem result. */
 {
 int newSize = strlen(in) + countChars(in, toEscape);
@@ -515,7 +515,7 @@ return out;
 
 struct hash *hashThisEqThatLine(char *line, int lineIx, boolean firstStartsWithLetter)
 /* Return a symbol table from a line of form:
- *   1-this1=val1 2-this='quoted val2' var3="another val" 
+ *   1-this1=val1 2-this='quoted val2' var3="another val"
  * If firstStartsWithLetter is true, then the left side of the equals must start with
  * a letter. */
 {
@@ -598,7 +598,7 @@ return list;
 }
 
 struct slName *charSepToSlNames(char *string, char c)
-/* Split string and convert character-separated list of items to slName list. 
+/* Split string and convert character-separated list of items to slName list.
  * Note that the last occurence of c is optional.  (That
  * is for a comma-separated list a,b,c and a,b,c, are
  * equivalent. */
@@ -810,7 +810,7 @@ if (count > 1)
         }
     freeMem(array);
     slReverse(&list);
-    *pL = list;       
+    *pL = list;
     }
 }
 

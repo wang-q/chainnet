@@ -44,10 +44,10 @@ static char *ZIP_READ[] = {"gzip", "-dc", NULL};
 
 char **result = NULL;
 char *fileNameDecoded = cloneString(fileName);
-if (startsWith("http://" , fileName)
- || startsWith("https://", fileName)
- || startsWith("ftp://",   fileName))
-    cgiDecode(fileName, fileNameDecoded, strlen(fileName));
+//if (startsWith("http://" , fileName)
+// || startsWith("https://", fileName)
+// || startsWith("ftp://",   fileName))
+//    cgiDecode(fileName, fileNameDecoded, strlen(fileName));
 
 if      (endsWith(fileNameDecoded, ".gz"))
     result = GZ_READ;
@@ -210,129 +210,129 @@ return lf;
 }
 
 
-struct lineFile *lineFileTabixMayOpen(char *fileOrUrl, bool zTerm)
-/* Wrap a line file around a data file that has been compressed and indexed
- * by the tabix command line program. <fileOrUrl>.tbi must be readable in
- * addition to fileOrUrl. If there's a problem, warn & return NULL.  This works
- * only if kent/src has been compiled with USE_TABIX=1 and linked
- * with the tabix C library. */
-{
-return lineFileTabixAndIndexMayOpen(fileOrUrl, NULL, zTerm);
-}
+//struct lineFile *lineFileTabixMayOpen(char *fileOrUrl, bool zTerm)
+///* Wrap a line file around a data file that has been compressed and indexed
+// * by the tabix command line program. <fileOrUrl>.tbi must be readable in
+// * addition to fileOrUrl. If there's a problem, warn & return NULL.  This works
+// * only if kent/src has been compiled with USE_TABIX=1 and linked
+// * with the tabix C library. */
+//{
+//return lineFileTabixAndIndexMayOpen(fileOrUrl, NULL, zTerm);
+//}
+//
+//
+//struct lineFile *lineFileTabixAndIndexMayOpen(char *fileOrUrl, char *tbiFileOrUrl, bool zTerm)
+///* Wrap a line file around a data file that has been compressed and indexed
+// * by the tabix command line program. tbiFileOrUrl can be NULL, it defaults to <fileOrUrl>.tbi.
+// * It must be readable in addition to fileOrUrl. If there's a problem, warn & return NULL.
+// * This works only if kent/src has been compiled with USE_TABIX=1 and linked
+// * with the tabix C library. */
+//{
+//if (fileOrUrl == NULL)
+//    errAbort("lineFileTabixMayOpen: fileOrUrl is NULL");
+//
+//char tbiName[4096];
+//if (tbiFileOrUrl==NULL)
+//    safef(tbiName, sizeof(tbiName), "%s.tbi", fileOrUrl);
+//else
+//    safef(tbiName, sizeof(tbiName), "%s", tbiFileOrUrl);
+//
+//htsFile *htsFile = hts_open(fileOrUrl, "r");
+//if (htsFile == NULL)
+//    {
+//    warn("Unable to open \"%s\"", fileOrUrl);
+//    return NULL;
+//    }
+//tbx_t *tabix;
+//if ((tabix = tbx_index_load2(fileOrUrl, tbiName)) == NULL)
+//    {
+//    warn("Unable to load tabix index from \"%s\"", tbiName);
+//    if (tabix)
+//        ti_close(tabix);
+//    tabix = NULL;
+//    return NULL;
+//    }
+//struct lineFile *lf = needMem(sizeof(struct lineFile));
+//lf->fileName = cloneString(fileOrUrl);
+//lf->fd = -1;
+//lf->bufSize = 64 * 1024;
+//lf->buf = needMem(lf->bufSize);
+//lf->zTerm = zTerm;
+//lf->tabix = tabix;
+//lf->htsFile = htsFile;
+//kstring_t *kline;
+//AllocVar(kline);
+//kline->s = malloc(8192);
+//lf->kline = kline;
+//lf->tabixIter = tbx_itr_queryi(tabix, HTS_IDX_REST, 0, 0);
+//return lf;
+//}
 
-
-struct lineFile *lineFileTabixAndIndexMayOpen(char *fileOrUrl, char *tbiFileOrUrl, bool zTerm)
-/* Wrap a line file around a data file that has been compressed and indexed
- * by the tabix command line program. tbiFileOrUrl can be NULL, it defaults to <fileOrUrl>.tbi.
- * It must be readable in addition to fileOrUrl. If there's a problem, warn & return NULL.
- * This works only if kent/src has been compiled with USE_TABIX=1 and linked
- * with the tabix C library. */
-{
-if (fileOrUrl == NULL)
-    errAbort("lineFileTabixMayOpen: fileOrUrl is NULL");
-
-char tbiName[4096];
-if (tbiFileOrUrl==NULL)
-    safef(tbiName, sizeof(tbiName), "%s.tbi", fileOrUrl);
-else
-    safef(tbiName, sizeof(tbiName), "%s", tbiFileOrUrl);
-
-htsFile *htsFile = hts_open(fileOrUrl, "r");
-if (htsFile == NULL)
-    {
-    warn("Unable to open \"%s\"", fileOrUrl);
-    return NULL;
-    }
-tbx_t *tabix;
-if ((tabix = tbx_index_load2(fileOrUrl, tbiName)) == NULL)
-    {
-    warn("Unable to load tabix index from \"%s\"", tbiName);
-    if (tabix)
-        ti_close(tabix);
-    tabix = NULL;
-    return NULL;
-    }
-struct lineFile *lf = needMem(sizeof(struct lineFile));
-lf->fileName = cloneString(fileOrUrl);
-lf->fd = -1;
-lf->bufSize = 64 * 1024;
-lf->buf = needMem(lf->bufSize);
-lf->zTerm = zTerm;
-lf->tabix = tabix;
-lf->htsFile = htsFile;
-kstring_t *kline;
-AllocVar(kline);
-kline->s = malloc(8192);
-lf->kline = kline;
-lf->tabixIter = tbx_itr_queryi(tabix, HTS_IDX_REST, 0, 0);
-return lf;
-}
-
-boolean lineFileSetTabixRegion(struct lineFile *lf, char *seqName, int start, int end)
-/* Assuming lf was created by lineFileTabixMayOpen, tell tabix to seek to the specified region
- * and return TRUE (or if there are no items in region, return FALSE). */
-{
-if (lf->tabix == NULL)
-    errAbort("lineFileSetTabixRegion: lf->tabix is NULL.  Did you open lf with lineFileTabixMayOpen?");
-if (seqName == NULL)
-    return FALSE;
-int tabixSeqId = ti_get_tid(lf->tabix, seqName);
-if (tabixSeqId < 0 && startsWith("chr", seqName))
-    // We will get some files that have chr-less Ensembl chromosome names:
-    tabixSeqId = ti_get_tid(lf->tabix, seqName+strlen("chr"));
-// Allow SARS-CoV-2 VCF to use GenBank or RefSeq ID instead of our chromified RefSeq ID:
-if (tabixSeqId < 0 && sameString(seqName, "NC_045512v2"))
-    {
-    tabixSeqId = ti_get_tid(lf->tabix, "MN908947.3");
-    if (tabixSeqId < 0)
-        tabixSeqId = ti_get_tid(lf->tabix, "NC_045512.2");
-    }
-if (tabixSeqId < 0)
-    return FALSE;
-ti_iter_t *iter = ti_queryi((tbx_t *)lf->tabix, tabixSeqId, start, end);
-if (iter == NULL)
-    return FALSE;
-if (lf->tabixIter != NULL)
-    ti_iter_destroy(lf->tabixIter);
-lf->tabixIter = iter;
-lf->bytesInBuf = 0;
-lf->lineIx = -1;
-lf->lineStart = 0;
-lf->lineEnd = 0;
-return TRUE;
-}
-
-struct lineFile *lineFileUdcMayOpen(char *fileOrUrl, bool zTerm)
-/* Create a line file object with an underlying UDC cache. NULL if not found. */
-{
-if (fileOrUrl == NULL)
-    errAbort("lineFileUdcMayOpen: fileOrUrl is NULL");
-
-if (udcIsLocal(fileOrUrl))
-     return lineFileOpen(fileOrUrl, zTerm);
-else
-    {
-    if (getDecompressor(fileOrUrl) != NULL)
-        {
-        warn("lineFileUdcMayOpen: can't open %s, support for compressed files not implemented. "
-             "[developer: use netLineFileMayOpen for compressed remote files.]",
-             fileOrUrl);
-        return NULL;
-        }
-    struct udcFile *udcFile = udcFileMayOpen(fileOrUrl, NULL);
-    if (udcFile == NULL)
-	return NULL;
-    struct lineFile *lf;
-    AllocVar(lf);
-    lf->fileName = cloneString(fileOrUrl);
-    lf->fd = -1;
-    lf->bufSize = 0;
-    lf->buf = NULL;
-    lf->zTerm = zTerm;
-    lf->udcFile = udcFile;
-    return lf;
-    }
-}
+//boolean lineFileSetTabixRegion(struct lineFile *lf, char *seqName, int start, int end)
+///* Assuming lf was created by lineFileTabixMayOpen, tell tabix to seek to the specified region
+// * and return TRUE (or if there are no items in region, return FALSE). */
+//{
+//if (lf->tabix == NULL)
+//    errAbort("lineFileSetTabixRegion: lf->tabix is NULL.  Did you open lf with lineFileTabixMayOpen?");
+//if (seqName == NULL)
+//    return FALSE;
+//int tabixSeqId = ti_get_tid(lf->tabix, seqName);
+//if (tabixSeqId < 0 && startsWith("chr", seqName))
+//    // We will get some files that have chr-less Ensembl chromosome names:
+//    tabixSeqId = ti_get_tid(lf->tabix, seqName+strlen("chr"));
+//// Allow SARS-CoV-2 VCF to use GenBank or RefSeq ID instead of our chromified RefSeq ID:
+//if (tabixSeqId < 0 && sameString(seqName, "NC_045512v2"))
+//    {
+//    tabixSeqId = ti_get_tid(lf->tabix, "MN908947.3");
+//    if (tabixSeqId < 0)
+//        tabixSeqId = ti_get_tid(lf->tabix, "NC_045512.2");
+//    }
+//if (tabixSeqId < 0)
+//    return FALSE;
+//ti_iter_t *iter = ti_queryi((tbx_t *)lf->tabix, tabixSeqId, start, end);
+//if (iter == NULL)
+//    return FALSE;
+//if (lf->tabixIter != NULL)
+//    ti_iter_destroy(lf->tabixIter);
+//lf->tabixIter = iter;
+//lf->bytesInBuf = 0;
+//lf->lineIx = -1;
+//lf->lineStart = 0;
+//lf->lineEnd = 0;
+//return TRUE;
+//}
+//
+//struct lineFile *lineFileUdcMayOpen(char *fileOrUrl, bool zTerm)
+///* Create a line file object with an underlying UDC cache. NULL if not found. */
+//{
+//if (fileOrUrl == NULL)
+//    errAbort("lineFileUdcMayOpen: fileOrUrl is NULL");
+//
+//if (udcIsLocal(fileOrUrl))
+//     return lineFileOpen(fileOrUrl, zTerm);
+//else
+//    {
+//    if (getDecompressor(fileOrUrl) != NULL)
+//        {
+//        warn("lineFileUdcMayOpen: can't open %s, support for compressed files not implemented. "
+//             "[developer: use netLineFileMayOpen for compressed remote files.]",
+//             fileOrUrl);
+//        return NULL;
+//        }
+//    struct udcFile *udcFile = udcFileMayOpen(fileOrUrl, NULL);
+//    if (udcFile == NULL)
+//	return NULL;
+//    struct lineFile *lf;
+//    AllocVar(lf);
+//    lf->fileName = cloneString(fileOrUrl);
+//    lf->fd = -1;
+//    lf->bufSize = 0;
+//    lf->buf = NULL;
+//    lf->zTerm = zTerm;
+//    lf->udcFile = udcFile;
+//    return lf;
+//    }
+//}
 
 
 void lineFileExpandBuf(struct lineFile *lf, int newSize)
@@ -397,11 +397,11 @@ if (lf->checkSupport)
 if (lf->pl != NULL)
     errnoAbort("Can't lineFileSeek on a compressed file: %s", lf->fileName);
 lf->reuse = FALSE;
-if (lf->udcFile)
-    {
-    udcSeek(lf->udcFile, offset);
-    return;
-    }
+//if (lf->udcFile)
+//    {
+//    udcSeek(lf->udcFile, offset);
+//    return;
+//    }
 lf->lineStart = lf->lineEnd = lf->bytesInBuf = 0;
 if ((lf->bufOffsetInFile = lseek(lf->fd, offset, whence)) == -1)
     errnoAbort("Couldn't lineFileSeek %s", lf->fileName);
@@ -539,48 +539,48 @@ if (lf->reuse)
 if (lf->nextCallBack)
     return lf->nextCallBack(lf, retStart, retSize);
 
-if (lf->udcFile)
-    {
-    lf->bufOffsetInFile = udcTell(lf->udcFile);
-    char *line = udcReadLine(lf->udcFile);
-    if (line==NULL)
-        return FALSE;
-    int lineSize = strlen(line);
-    lf->bytesInBuf = lineSize;
-    ++lf->lineIx;
-    lf->lineStart = 0;
-    lf->lineEnd = lineSize;
-    *retStart = line;
-    freeMem(lf->buf);
-    lf->buf = line;
-    lf->bufSize = lineSize;
-    if (retSize != NULL)
-	*retSize = lineSize;
-    return TRUE;
-    }
+//if (lf->udcFile)
+//    {
+//    lf->bufOffsetInFile = udcTell(lf->udcFile);
+//    char *line = udcReadLine(lf->udcFile);
+//    if (line==NULL)
+//        return FALSE;
+//    int lineSize = strlen(line);
+//    lf->bytesInBuf = lineSize;
+//    ++lf->lineIx;
+//    lf->lineStart = 0;
+//    lf->lineEnd = lineSize;
+//    *retStart = line;
+//    freeMem(lf->buf);
+//    lf->buf = line;
+//    lf->bufSize = lineSize;
+//    if (retSize != NULL)
+//	*retSize = lineSize;
+//    return TRUE;
+//    }
 
-if (lf->tabix != NULL && lf->tabixIter != NULL)
-    {
-    // Just use line-oriented ti_read:
-    int lineSize = 0;
-    lineSize = tbx_itr_next(lf->htsFile, lf->tabix, lf->tabixIter, lf->kline);
-    if (lineSize == -1)
-	return FALSE;
-    lf->bufOffsetInFile = -1;
-    lf->bytesInBuf = lineSize;
-    lf->lineIx = -1;
-    lf->lineStart = 0;
-    lf->lineEnd = lineSize;
-    if (lineSize > lf->bufSize)
-	// shouldn't be!  but just in case:
-	lineFileExpandBuf(lf, lineSize * 2);
-    kstring_t *kline = lf->kline;
-    safecpy(lf->buf, lf->bufSize, kline->s);
-    *retStart = lf->buf;
-    if (retSize != NULL)
-	*retSize = lineSize;
-    return TRUE;
-    }
+//if (lf->tabix != NULL && lf->tabixIter != NULL)
+//    {
+//    // Just use line-oriented ti_read:
+//    int lineSize = 0;
+//    lineSize = tbx_itr_next(lf->htsFile, lf->tabix, lf->tabixIter, lf->kline);
+//    if (lineSize == -1)
+//	return FALSE;
+//    lf->bufOffsetInFile = -1;
+//    lf->bytesInBuf = lineSize;
+//    lf->lineIx = -1;
+//    lf->lineStart = 0;
+//    lf->lineEnd = lineSize;
+//    if (lineSize > lf->bufSize)
+//	// shouldn't be!  but just in case:
+//	lineFileExpandBuf(lf, lineSize * 2);
+//    kstring_t *kline = lf->kline;
+//    safecpy(lf->buf, lf->bufSize, kline->s);
+//    *retStart = lf->buf;
+//    if (retSize != NULL)
+//	*retSize = lineSize;
+//    return TRUE;
+//    }
 
 char *buf = lf->buf;
 int endIx = lf->lineEnd;
@@ -715,17 +715,17 @@ if ((lf = *pLf) != NULL)
 	close(lf->fd);
 	freeMem(lf->buf);
 	}
-    else if (lf->tabix != NULL)
-	{
-	if (lf->tabixIter != NULL)
-	    ti_iter_destroy(lf->tabixIter);
-	ti_close(lf->tabix);
-        hts_close(lf->htsFile);
-        kstring_t *kline = lf->kline;
-        free(kline->s);
-	}
-    else if (lf->udcFile != NULL)
-        udcFileClose(&lf->udcFile);
+//    else if (lf->tabix != NULL)
+//	{
+//	if (lf->tabixIter != NULL)
+//	    ti_iter_destroy(lf->tabixIter);
+//	ti_close(lf->tabix);
+//        hts_close(lf->htsFile);
+//        kstring_t *kline = lf->kline;
+//        free(kline->s);
+//	}
+//    else if (lf->udcFile != NULL)
+//        udcFileClose(&lf->udcFile);
 
     if (lf->closeCallBack)
         lf->closeCallBack(lf);
