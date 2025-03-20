@@ -442,9 +442,9 @@ struct twoBitFile *tbf;
 AllocVar(tbf);
 setFileFuncs(tbf, useUdc);
 
-//if (useUdc)
-//    tbf->f = udcFileOpen(fileName, NULL);
-//else
+if (useUdc)
+    tbf->f = udcFileOpen(fileName, NULL);
+else
     tbf->f = mustOpen(fileName, "rb");
 
 return tbf;

@@ -14,7 +14,7 @@
 #include "linefile.h"
 #include "dnaseq.h"
 #include "dystring.h"
-//#include "fuzzyFind.h"
+#include "fuzzyFind.h"
 #include "aliType.h"
 #include "binRange.h"
 #include "rangeTree.h"

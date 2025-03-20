@@ -1,5 +1,5 @@
 /* portable.h - wrappers around things that vary from server
- * to server and operating system to operating system. 
+ * to server and operating system to operating system.
  *
  * This file is copyright 2002 Jim Kent, but license is hereby
  * granted for all use - public, private or commercial. */
@@ -11,11 +11,11 @@
 #include <sys/stat.h>
 
 struct slName *listDir(char *dir, char *pattern);
-/* Return an alphabetized list of all files that match 
+/* Return an alphabetized list of all files that match
  * the wildcard pattern in directory. */
 
 struct slName *listDirRegEx(char *dir, char *regEx, int flags);
-/* Return an alphabetized list of all files that match 
+/* Return an alphabetized list of all files that match
  * the regular expression pattern in directory.
  * See REGCOMP(3) for flags (e.g. REG_ICASE)  */
 
@@ -23,7 +23,7 @@ struct slName *pathsInDirAndSubdirs(char *dir, char *wildcard);
 /* Return list of all non-directory files in dir and it's
  * subdirs.  Returns path to files including dir and subdir. */
 
-struct fileInfo 
+struct fileInfo
 /* Info about a file. */
     {
     struct fileInfo  *next;	/* Next in list. */
@@ -35,7 +35,7 @@ struct fileInfo
     char name[1];	/* Allocated at run time. */
     };
 
-struct fileInfo *newFileInfo(char *name, off_t size, bool isDir, int statErrno, 
+struct fileInfo *newFileInfo(char *name, off_t size, bool isDir, int statErrno,
 	time_t lastAccess, time_t creationTime);
 /* Return a new fileInfo. */
 
@@ -120,7 +120,7 @@ char *semiUniqName(char *base);
 char *cgiDir();
 /* Return directory to look for cgi in. */
 
-char *trashDir();
+//char *trashDir();
 /* Return directory for relative path to trash from cgi binaries */
 
 void mkdirTrashDirectory(char *prefix);
@@ -179,7 +179,7 @@ char *mustReadSymlinkExt(char *path, struct stat *sb);
 /* Read symlink or abort. FreeMem the returned value. */
 
 char *mustReadSymlink(char *path);
-/* Read symlink or abort. Checks that path is a symlink. 
+/* Read symlink or abort. Checks that path is a symlink.
 FreeMem the returned value. */
 
 void makeSymLink(char *oldName, char *newName);

@@ -1,7 +1,7 @@
 /* verbose.c - write out status messages according to the
  * current verbosity level.  These messages go to stderr. */
 
-/* Copyright (C) 2011 The Regents of the University of California 
+/* Copyright (C) 2011 The Regents of the University of California
  * See kent/LICENSE or http://genome.ucsc.edu/license/ for licensing information. */
 
 #include "common.h"
@@ -29,7 +29,7 @@ if (verbosity <= logVerbosity)
     if (doHtml)
         {
         char buf[4096];
-        int threadId = get_thread_id();
+        int threadId = 0; //get_thread_id();
         safef(buf, sizeof(buf), "%d %s<br>", threadId, format); // cannot do two printfs, as they are not thread safe, so the <br> will not stay with the line
         vfprintf(logFile, buf, args);
         }
@@ -141,7 +141,7 @@ if (logFile == NULL)
 return logFile;
 }
 
-void verboseCgi(char *level) 
+void verboseCgi(char *level)
 /* Set verbosity level for a CGI: if level is not NULL, set output file to stdout, set verbosity and print a content-type header */
 {
     if (level==NULL)

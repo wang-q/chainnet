@@ -14,7 +14,7 @@
 #include "pipeline.h"
 #include "localmem.h"
 //#include "cheapcgi.h"
-//#include "udc.h"
+#include "udc.h"
 //#include "htslib/tbx.h"
 
 char *getFileNameFromHdrSig(char *m)
@@ -219,8 +219,8 @@ return lf;
 //{
 //return lineFileTabixAndIndexMayOpen(fileOrUrl, NULL, zTerm);
 //}
-//
-//
+
+
 //struct lineFile *lineFileTabixAndIndexMayOpen(char *fileOrUrl, char *tbiFileOrUrl, bool zTerm)
 ///* Wrap a line file around a data file that has been compressed and indexed
 // * by the tabix command line program. tbiFileOrUrl can be NULL, it defaults to <fileOrUrl>.tbi.
@@ -301,38 +301,38 @@ return lf;
 //lf->lineEnd = 0;
 //return TRUE;
 //}
-//
-//struct lineFile *lineFileUdcMayOpen(char *fileOrUrl, bool zTerm)
-///* Create a line file object with an underlying UDC cache. NULL if not found. */
-//{
-//if (fileOrUrl == NULL)
-//    errAbort("lineFileUdcMayOpen: fileOrUrl is NULL");
-//
-//if (udcIsLocal(fileOrUrl))
-//     return lineFileOpen(fileOrUrl, zTerm);
-//else
-//    {
-//    if (getDecompressor(fileOrUrl) != NULL)
-//        {
-//        warn("lineFileUdcMayOpen: can't open %s, support for compressed files not implemented. "
-//             "[developer: use netLineFileMayOpen for compressed remote files.]",
-//             fileOrUrl);
-//        return NULL;
-//        }
-//    struct udcFile *udcFile = udcFileMayOpen(fileOrUrl, NULL);
-//    if (udcFile == NULL)
-//	return NULL;
-//    struct lineFile *lf;
-//    AllocVar(lf);
-//    lf->fileName = cloneString(fileOrUrl);
-//    lf->fd = -1;
-//    lf->bufSize = 0;
-//    lf->buf = NULL;
-//    lf->zTerm = zTerm;
-//    lf->udcFile = udcFile;
-//    return lf;
-//    }
-//}
+
+struct lineFile *lineFileUdcMayOpen(char *fileOrUrl, bool zTerm)
+/* Create a line file object with an underlying UDC cache. NULL if not found. */
+{
+if (fileOrUrl == NULL)
+    errAbort("lineFileUdcMayOpen: fileOrUrl is NULL");
+
+if (udcIsLocal(fileOrUrl))
+     return lineFileOpen(fileOrUrl, zTerm);
+else
+    {
+    if (getDecompressor(fileOrUrl) != NULL)
+        {
+        warn("lineFileUdcMayOpen: can't open %s, support for compressed files not implemented. "
+             "[developer: use netLineFileMayOpen for compressed remote files.]",
+             fileOrUrl);
+        return NULL;
+        }
+    struct udcFile *udcFile = udcFileMayOpen(fileOrUrl, NULL);
+    if (udcFile == NULL)
+	return NULL;
+    struct lineFile *lf;
+    AllocVar(lf);
+    lf->fileName = cloneString(fileOrUrl);
+    lf->fd = -1;
+    lf->bufSize = 0;
+    lf->buf = NULL;
+    lf->zTerm = zTerm;
+    lf->udcFile = udcFile;
+    return lf;
+    }
+}
 
 
 void lineFileExpandBuf(struct lineFile *lf, int newSize)
@@ -397,11 +397,11 @@ if (lf->checkSupport)
 if (lf->pl != NULL)
     errnoAbort("Can't lineFileSeek on a compressed file: %s", lf->fileName);
 lf->reuse = FALSE;
-//if (lf->udcFile)
-//    {
-//    udcSeek(lf->udcFile, offset);
-//    return;
-//    }
+if (lf->udcFile)
+    {
+    udcSeek(lf->udcFile, offset);
+    return;
+    }
 lf->lineStart = lf->lineEnd = lf->bytesInBuf = 0;
 if ((lf->bufOffsetInFile = lseek(lf->fd, offset, whence)) == -1)
     errnoAbort("Couldn't lineFileSeek %s", lf->fileName);
@@ -539,25 +539,25 @@ if (lf->reuse)
 if (lf->nextCallBack)
     return lf->nextCallBack(lf, retStart, retSize);
 
-//if (lf->udcFile)
-//    {
-//    lf->bufOffsetInFile = udcTell(lf->udcFile);
-//    char *line = udcReadLine(lf->udcFile);
-//    if (line==NULL)
-//        return FALSE;
-//    int lineSize = strlen(line);
-//    lf->bytesInBuf = lineSize;
-//    ++lf->lineIx;
-//    lf->lineStart = 0;
-//    lf->lineEnd = lineSize;
-//    *retStart = line;
-//    freeMem(lf->buf);
-//    lf->buf = line;
-//    lf->bufSize = lineSize;
-//    if (retSize != NULL)
-//	*retSize = lineSize;
-//    return TRUE;
-//    }
+if (lf->udcFile)
+    {
+    lf->bufOffsetInFile = udcTell(lf->udcFile);
+    char *line = udcReadLine(lf->udcFile);
+    if (line==NULL)
+        return FALSE;
+    int lineSize = strlen(line);
+    lf->bytesInBuf = lineSize;
+    ++lf->lineIx;
+    lf->lineStart = 0;
+    lf->lineEnd = lineSize;
+    *retStart = line;
+    freeMem(lf->buf);
+    lf->buf = line;
+    lf->bufSize = lineSize;
+    if (retSize != NULL)
+	*retSize = lineSize;
+    return TRUE;
+    }
 
 //if (lf->tabix != NULL && lf->tabixIter != NULL)
 //    {
@@ -724,8 +724,8 @@ if ((lf = *pLf) != NULL)
 //        kstring_t *kline = lf->kline;
 //        free(kline->s);
 //	}
-//    else if (lf->udcFile != NULL)
-//        udcFileClose(&lf->udcFile);
+    else if (lf->udcFile != NULL)
+        udcFileClose(&lf->udcFile);
 
     if (lf->closeCallBack)
         lf->closeCallBack(lf);

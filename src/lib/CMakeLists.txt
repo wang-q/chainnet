@@ -5,10 +5,12 @@ add_library(chainnetlib STATIC
     binRange.c
     bits.c
     bPlusTree.c
-    boxClump.c
     chain.c
     chainBlock.c
     chainConnect.c
+    chainNet.c
+    chainToAxt.c
+    chainToPsl.c
     common.c
     dlist.c
     dnaseq.c
@@ -16,21 +18,32 @@ add_library(chainnetlib STATIC
     dystring.c
     errAbort.c
     fa.c
+    filePath.c
+    ffAli.c
     gapCalc.c
     hash.c
+    lav.c
     linefile.c
     localmem.c
+    maf.c
+    memalloc.c
     nib.c
+    nibTwo.c
     obscure.c
     options.c
+    osunix.c
     pipeline.c
+    portimpl.c
     psl.c
+    quickHeap.c
     rangeTree.c
     rbTree.c
     sqlList.c
     sqlNum.c
     twoBit.c
+    udc.c
     verbose.c
+    wildcmp.c
 )
 
 # Set include directories for the library
@@ -40,6 +53,13 @@ target_include_directories(chainnetlib PUBLIC
 
 # Set compiler options for the library
 target_compile_options(chainnetlib PRIVATE
-    $<$<C_COMPILER_ID:MSVC>:/W4>
-    $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra>
+    -Wall
+    -Wextra
+    -Wno-sign-compare
+    -Wno-visibility
+    -Wno-unused-function
+    -Wno-unused-parameter
+    -Wno-unused-variable
+    -Wno-unused-but-set-variable
+    -Wno-deprecated-non-prototype
 )
