@@ -1,36 +1,49 @@
 # UCSC chain/net pipeline
 
-kent-core-479
+This repository contains chain/net tools extracted from [kent-core-479](https://github.com/ucscGenomeBrowser/kent-core),
+which are used for genomic sequence alignment analysis.
+Please note that this is not the UCSC Genome Browser source code repository.
+
+## Build
 
 ```bash
-ASM="zig cc" \
-CC="zig cc" \
-CXX="zig c++" \
-CFLAGS="-I$HOME/.cbp/include" \
-LDFLAGS="-L$HOME/.cbp/lib" \
-cmake \
-    -S . -B build &&
-    cmake --build build
+cmake -S . -B build
+cmake --build build
 
 ```
 
+## Tools Overview
 
-```bash
-CC="zig cc" \
-CXX="zig c++" \
-AR="zig ar" \
-RANLIB="zig ranlib" \
-CFLAGS="-O3 -fPIC" \
-CXXFLAGS="-O3 -fPIC -felide-constructors -fno-exceptions -fno-rtti" \
-ABI_CHECK="" \
-    ./configure \
-    --prefix=$HOME/collect \
-    --disable-dependency-tracking \
-    --disable-shared \
-    --enable-static \
-    --without-docs \
-    --without-man \
-    --without-debug \
-    --without-server
+### Chain Tools
 
-```
+- `axtChain`: Convert alignments from axt to chain format
+- `chainAntiRepeat`: Remove repeats from chain files
+- `chainMergeSort`: Merge and sort chain files
+- `chainNet`: Create hierarchical net structure from chain files
+- `chainPreNet`: Prepare chain file for net creation
+- `chainSplit`: Split chain files by chromosome
+- `chainStitchId`: Process chain IDs
+
+### Net Tools
+
+- `netChainSubset`: Extract specific chains from nets
+- `netFilter`: Filter net files
+- `netSplit`: Split net files
+- `netSyntenic`: Extract syntenic regions from nets
+- `netToAxt`: Convert net to axt format
+
+### Format Conversion Tools
+
+- `axtSort`: Sort axt files
+- `axtToMaf`: Convert axt to maf format
+- `faToTwoBit`: Convert FASTA to 2bit format
+- `lavToPsl`: Convert lav to psl format
+
+## License
+
+Same license as the original kent source.
+
+## References
+
+- [UCSC Genome Browser](https://genome.ucsc.edu/)
+- [Data File Formats](https://genome.ucsc.edu/FAQ/FAQformat.html)
