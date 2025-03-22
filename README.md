@@ -1,8 +1,9 @@
 # UCSC chain/net pipeline
 
-This repository contains chain/net tools extracted from [kent-core-479](https://github.com/ucscGenomeBrowser/kent-core),
-which are used for genomic sequence alignment analysis.
-Please note that this is not the UCSC Genome Browser source code repository.
+This repository contains chain/net tools extracted
+from [kent-core-479](https://github.com/ucscGenomeBrowser/kent-core), which are used for genomic
+sequence alignment analysis. Please note that this is not the UCSC Genome Browser source code
+repository.
 
 ## Build
 

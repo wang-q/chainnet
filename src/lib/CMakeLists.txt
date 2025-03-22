@@ -63,3 +63,6 @@ target_compile_options(chainnetlib PRIVATE
     -Wno-unused-but-set-variable
     -Wno-deprecated-non-prototype
 )
+
+# Link with math library
+target_link_libraries(chainnetlib PUBLIC m)

@@ -13,7 +13,7 @@
 #include "lib/fa.h"
 #include "lib/axt.h"
 #include "lib/psl.h"
-#include "lib/boxClump.h"
+//#include "lib/boxClump.h"
 #include "lib/portable.h"
 #include "lib/chainBlock.h"
 #include "lib/gapCalc.h"
