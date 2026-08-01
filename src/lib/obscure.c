@@ -4,6 +4,7 @@
  * granted for all use - public, private or commercial. */
 
 #include "common.h"
+#include <stdint.h>
 #include <unistd.h>
 //#include <sys/syscall.h>
 #include "portable.h"
@@ -309,16 +310,14 @@ void *charToPt(char c)
 /* Convert char to pointer. Use when really want to store
  * a char in a pointer field. */
 {
-char *pt = NULL;
-return pt+c;
+return (void *)(uintptr_t)(unsigned char)c;
 }
 
 char ptToChar(void *pt)
 /* Convert pointer to char.  Use when really want to store a
  * pointer in a char. */
 {
-char *a = NULL, *b = pt;
-return b - a;
+return (char)(uintptr_t)pt;
 }
 
 
@@ -326,32 +325,28 @@ void *intToPt(int i)
 /* Convert integer to pointer. Use when really want to store an
  * int in a pointer field. */
 {
-char *pt = NULL;
-return pt+i;
+return (void *)(uintptr_t)i;
 }
 
 int ptToInt(void *pt)
 /* Convert pointer to integer.  Use when really want to store a
  * pointer in an int. */
 {
-char *a = NULL, *b = pt;
-return b - a;
+return (int)(uintptr_t)pt;
 }
 
 void *sizetToPt(size_t i)
 /* Convert size_t to pointer. Use when really want to store a
  * size_t in a pointer. */
 {
-char *pt = NULL;
-return pt+i;
+return (void *)(uintptr_t)i;
 }
 
 size_t ptToSizet(void *pt)
 /* Convert pointer to size_t.  Use when really want to store a
  * pointer in a size_t. */
 {
-char *a = NULL, *b = pt;
-return b - a;
+return (size_t)(uintptr_t)pt;
 }
 
 boolean parseQuotedStringNoEscapes( char *in, char *out, char **retNext)

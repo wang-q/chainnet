@@ -4,6 +4,7 @@
  * granted for all use - public, private or commercial. */
 
 #include "common.h"
+#include <stdint.h>
 #include "localmem.h"
 #include "hash.h"
 #include "obscure.h"
@@ -309,8 +310,7 @@ return hel->name;
 struct hashEl *hashAddInt(struct hash *hash, char *name, int val)
 /* Store integer value in hash */
 {
-char *pt = NULL;
-return hashAdd(hash, name, pt + val);
+return hashAdd(hash, name, (void *)(uintptr_t)val);
 }
 
 
@@ -325,10 +325,8 @@ if (hel == NULL)
   }
 else
   {
-  char *ptVal = hel->val;
-  ptVal += 1;
-  hel->val = ptVal;
-  return ptToInt(ptVal);
+  hel->val = (void *)((uintptr_t)hel->val + 1);
+  return ptToInt(hel->val);
   }
 }
 
@@ -386,6 +384,7 @@ hash->autoExpand = TRUE;
 hash->expansionFactor = defaultExpansionFactor;   /* Expand when elCount > size*expansionFactor */
 return hash;
 }
+
 
 struct hash *newHashExt(int powerOfTwoSize, boolean useLocalMem)
 /* Returns new hash table. Uses local memory optionally. */
@@ -847,5 +846,3 @@ for (i=0; i<nameValCount; ++i)
     hashAdd(hash, nameVal[i][0], nameVal[i][1]);
 return hash;
 }
-
-
